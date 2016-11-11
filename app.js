@@ -1,8 +1,11 @@
 angular.module('myApp',[] )
-.service('contactService' , function () {
+.service('contactService' , function ($http) {
 	var self = this
 
-	self.contacts = []
+	self.contacts = [
+		{id : 0 ,full : "Tor Peerapol",	done : false},
+		{id : 1 ,full : "Bow Kamonluk",	done : true},
+	]
 	
 	self.list = function () {
 		return self.contacts
@@ -11,22 +14,38 @@ angular.module('myApp',[] )
 	self.add = function (contact) {
 		self.contacts.push(contact)
 	}
+
+
+	self.setTrue = function (contact) {
+		self.contacts[contact].done = true
+	}
+
+	self.setFalse = function (contact) {
+		self.contacts[contact].done = false
+	}
 })
 .controller('listTodo' , function ($scope , contactService){
 	$scope.contacts = contactService.list()
 	
-	$scope.checkboxModel = {
-      		 value : ''
-        };
+	$scope.onCompleteTodo = function(contact) {
+		
+		if (contactService.contacts[contact].done == false ){
+			contactService.setTrue(contact)
+		}else if (contactService.contacts[contact].done == true ){
+			contactService.setFalse(contact)
+		}
+        
+	}
 })
 .controller('addTodo' , function ($scope , contactService){
+	var i = 2
 	$scope.save = function () {
-		if ( $scope.newtodo != undefined){
+		if ($scope.newtodo != undefined ){
 			var contact = {
-				full : $scope.newtodo
-				//value : ''	
+				id : i++ ,
+				full : $scope.newtodo,
+				done : false
 			}
-			console.log($scope.newtodo)
 			contactService.add(contact)
 			reset()
 		}
